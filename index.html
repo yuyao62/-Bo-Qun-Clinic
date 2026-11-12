@@ -40,6 +40,7 @@ footer{background:#edf0fa}
 .session-time{display:block;white-space:nowrap;font-size:10px;font-weight:400;line-height:1.5;margin-top:5px}.schedule-table tbody th{width:110px}
 .services{margin:36px 0 0;scroll-margin-top:24px}.services-title{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:20px}.services-title h2{font-size:24px;letter-spacing:.08em}.services-title>a{color:#243aaf;font-size:13px;font-weight:700}.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.service-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px}.service-no{display:inline-block;background:#fff4b6;color:#5b4e0b;border-radius:6px;padding:2px 9px;font-size:10px;letter-spacing:.12em;margin-bottom:14px}.service-card h3{font-size:17px;margin:0 0 10px;color:#243aaf}.service-card p,.service-card li{font-size:13px;color:var(--muted);line-height:1.9}.service-card ul{padding-left:18px;margin:0}.service-card a{display:inline-block;font-size:11px;color:#243aaf;text-decoration:underline;text-underline-offset:3px;margin-top:12px}.services-foot{font-size:12px;color:var(--muted);padding:18px 0 0;line-height:1.9}@media(max-width:800px){.service-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.service-grid{grid-template-columns:1fr}.services-title h2{font-size:21px}.service-card{padding:21px}}
 .dashboard{overflow:clip}.live-frame-stage{padding:28px 16px;display:grid;place-items:center;overflow:clip;min-height:205px;background:#fff}.live-frame-zoom{position:relative}.live-frame-crop{width:460px;height:110px;overflow:clip;position:relative;transform-origin:top left;background:#f9f9f9}.live-frame-crop iframe{position:absolute;left:-516px;top:0;width:1100px;height:450px;border:0;max-width:none;pointer-events:none}@media(max-width:600px){.live-frame-stage{min-height:190px}.dashboard-bottom{align-items:center}}
+.queue-info-layout{display:grid;grid-template-columns:1fr 1fr;align-items:center}.roster-panel{padding:30px 40px}.roster-label{font-size:14px;color:var(--muted);margin-bottom:10px}.roster-doctor{color:#243aaf;font-size:40px;font-weight:700;line-height:1.45;letter-spacing:.02em}.roster-session{font-size:14px;color:var(--muted);margin-top:8px}.roster-link{display:inline-block;margin-top:16px;font-size:12px;color:#243aaf}.queue-numbers{border-left:1px solid var(--line)}.queue-numbers .live-frame-stage{min-height:215px}@media(max-width:640px){.queue-info-layout{grid-template-columns:1fr}.roster-panel{padding:23px 22px 18px}.roster-doctor{font-size:29px}.roster-label,.roster-session{font-size:12px}.roster-link{margin-top:8px}.queue-numbers{border-left:0;border-top:1px solid var(--line)}.queue-numbers .live-frame-stage{min-height:172px;padding:16px}}
 </style>
 </head>
 <body>
@@ -47,11 +48,14 @@ footer{background:#edf0fa}
 <main class="wrap">
 <section class="intro"><div><p class="eyebrow">CLINIC QUEUE</p><h1>看診進度</h1><p class="intro-copy">先了解候診狀況，讓就診安排更從容。</p></div><p class="today" id="today"></p></section>
 <section class="dashboard" aria-labelledby="queue-title">
- <div class="dashboard-top"><h2 id="queue-title">門診候診資訊</h2><span class="badge good">原站即時畫面</span></div>
- <div class="live-frame-stage" id="live-stage"><div class="live-frame-zoom" id="live-zoom"><div class="live-frame-crop" id="live-crop"><iframe id="live-queue" title="博群診所原站候診資訊：門診序為看診號碼，等待為候診人數" src="https://wroom.vision.com.tw/MainPage/ClinicInfo.aspx?CliID=QCpjCdqyOd8V%2buKpwwfjbg==#dnn_ctr655_ViewVWWL_Clinics_mcsModuleCont_ctl00_visWInfos_gvwCRoom" scrolling="no" loading="eager" tabindex="-1"></iframe></div></div></div>
+ <div class="dashboard-top"><h2 id="queue-title">門診候診資訊</h2><span class="badge good">候診數字依原站</span></div>
+ <div class="queue-info-layout">
+  <section class="roster-panel" aria-labelledby="roster-label"><p class="roster-label" id="roster-label">門診表排班醫師</p><p class="roster-doctor" id="roster-doctor" aria-live="polite">—</p><p class="roster-session" id="roster-session"></p><a class="roster-link" href="#schedule">依每週門診表 →</a></section>
+  <div class="queue-numbers"><div class="live-frame-stage" id="live-stage"><div class="live-frame-zoom" id="live-zoom"><div class="live-frame-crop" id="live-crop"><iframe id="live-queue" title="博群診所原站候診資訊：門診序為看診號碼，等待為候診人數" src="https://wroom.vision.com.tw/MainPage/ClinicInfo.aspx?CliID=QCpjCdqyOd8V%2buKpwwfjbg==#dnn_ctr655_ViewVWWL_Clinics_mcsModuleCont_ctl00_visWInfos_gvwCRoom" scrolling="no" loading="eager" tabindex="-1"></iframe></div></div></div>
+ </div></div>
  <div class="dashboard-bottom"><div class="time"><p>門診序＝目前看診號碼・等待＝候診人數</p><p>數字由原站約每 60 秒更新</p></div><button class="refresh" id="refresh" type="button">↻ 重新載入原站</button></div>
 </section>
-<div class="notice"><span class="info" aria-hidden="true">ⓘ</span><p>此處直接顯示原站候診區塊。若畫面空白，請開啟原站查詢；實際叫號與候診安排，請以診所為準。</p></div>
+<div class="notice"><span class="info" aria-hidden="true">ⓘ</span><p>排班醫師依下方門診表顯示，候診號碼與等待人數由原站更新。臨時異動及實際叫號請以診所為準；數字畫面空白時請開啟原站查詢。</p></div>
 <nav class="actions" aria-label="就診聯絡"><a class="action primary source" target="_blank" rel="noopener noreferrer"><div><p class="action-title">開啟原站候診查詢</p><p class="action-sub">全國雲端候診中心</p></div><span class="arrow" aria-hidden="true">↗</span></a><a class="action" href="tel:0224601356"><div><p class="action-title">致電博群診所</p><p class="action-sub">02-2460-1356</p></div><span class="arrow" aria-hidden="true">↗</span></a><a class="action" href="https://www.google.com/maps/search/?api=1&amp;query=博群診所%20基隆市中正區新豐街446號" target="_blank" rel="noopener noreferrer"><div><p class="action-title">門市交通</p><p class="action-sub">新豐街 446 號</p></div><span class="arrow" aria-hidden="true">↗</span></a></nav>
 <a class="schedule-shortcut" href="#schedule">查看每週門診表 <span aria-hidden="true">↓</span></a>
 <section class="schedule" id="schedule" aria-labelledby="schedule-title">
@@ -92,14 +96,42 @@ document.querySelectorAll('.source').forEach(a=>a.href=SOURCE);
 document.getElementById('today').textContent=new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',month:'long',day:'numeric',weekday:'long'}).format(new Date());
 const stage=document.getElementById('live-stage'),zoom=document.getElementById('live-zoom'),crop=document.getElementById('live-crop'),frame=document.getElementById('live-queue');
 function fitQueue(){
- const mobile=stage.clientWidth<600,baseWidth=mobile?150:460,baseHeight=mobile?70:110;
+ const baseWidth=150,baseHeight=70;
  const scale=Math.min(2,(stage.clientWidth-32)/baseWidth);
  crop.style.width=baseWidth+'px';crop.style.height=baseHeight+'px';crop.style.transform='scale('+scale+')';
  zoom.style.width=baseWidth*scale+'px';zoom.style.height=baseHeight*scale+'px';
- frame.style.left=(mobile?-824:-516)+'px';frame.style.top=(mobile?-31:0)+'px';
+ frame.style.left='-824px';frame.style.top='-31px';
 }
 fitQueue();new ResizeObserver(fitQueue).observe(stage);
+function getSchedule(date=new Date()){
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(date).map(p=>[p.type,p.value]));
+ const dayIndex={Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6,Sun:7}[parts.weekday];
+ const weekLabel={Mon:'星期一',Tue:'星期二',Wed:'星期三',Thu:'星期四',Fri:'星期五',Sat:'星期六',Sun:'星期日'}[parts.weekday];
+ const minutes=Number(parts.hour)*60+Number(parts.minute);
+ const rows=Array.from(document.querySelectorAll('.schedule-table tbody tr'));
+ for(const row of rows){
+  const time=row.querySelector('.session-time').textContent;
+  const m=time.match(/(\d{2}):(\d{2})[–~](\d{2}):(\d{2})/);
+  if(!m)continue;
+  const start=Number(m[1])*60+Number(m[2]),end=Number(m[3])*60+Number(m[4]);
+  if(minutes>=start&&minutes<end){
+   const raw=row.cells[dayIndex].textContent.trim();
+   const closed=raw==='休診';
+   const doctor=closed?'表定休診':raw.split(/[／/]/).map(name=>name.trim()+'醫師').join('／');
+   return {doctor,session:weekLabel+'・'+row.cells[0].childNodes[0].textContent.trim()+'診 '+time,closed};
+  }
+ }
+ return {doctor:'目前非表定門診時段',session:weekLabel+'・請查看每週門診表',closed:true};
+}
+function renderRoster(){
+ const current=getSchedule();
+ document.getElementById('roster-doctor').textContent=current.doctor;
+ document.getElementById('roster-session').textContent=current.session;
+}
+renderRoster();setInterval(renderRoster,30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderRoster()});
 document.getElementById('refresh').addEventListener('click',()=>{frame.src=FRAME_URL;});
 </script>
 </body>
 </html>
+
