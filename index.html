@@ -124,7 +124,8 @@ function getSchedule(date=new Date()){
  return {doctor:'目前非表定門診時段',session:weekLabel+'・請查看每週門診表',closed:true};
 }
 function renderRoster(){
- const current=getSchedule();
+ const now=new Date(),current=getSchedule(now);
+ document.getElementById('today').textContent=new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',month:'long',day:'numeric',weekday:'long'}).format(now);
  document.getElementById('roster-doctor').textContent=current.doctor;
  document.getElementById('roster-session').textContent=current.session;
 }
