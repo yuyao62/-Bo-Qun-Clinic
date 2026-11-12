@@ -6,11 +6,15 @@ import json
 import os
 from pathlib import Path
 import re
+import sys
 import urllib.request
 
 SOURCE = 'https://wroom.vision.com.tw/MainPage/ClinicInfo.aspx?CliID=QCpjCdqyOd8V%2buKpwwfjbg=='
 ENDPOINT = 'https://wroom.vision.com.tw/WServ/VWWL_Clinics.svc/GetWaitInfo'
 TAIPEI = timezone(timedelta(hours=8))
+# Anonymous routing fields from this clinic's supplied public page.
+PUBLIC_PORTAL_ID = 'JjYAqpRdgjE='
+PUBLIC_CLINIC_CODE = '88173'
 
 
 class ClinicPage(HTMLParser):
@@ -29,7 +33,7 @@ def request(url, data=None):
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Referer': SOURCE,
     })
-    with urllib.request.urlopen(req, timeout=25) as response:
+    with urllib.request.urlopen(req, timeout=60) as response:
         return response.read(1_000_001).decode('utf-8-sig')
 
 
@@ -62,16 +66,9 @@ def parse_rooms(payload):
 
 
 def fetch():
-    html = request(SOURCE)
-    if '博群診所' not in html:
-        raise ValueError('Clinic identity did not match')
-    page = ClinicPage()
-    page.feed(html)
-    portal = re.search(r"C__PortalID\s*=\s*'([^']+)'", html)
-    if not page.vcode or not portal:
-        raise ValueError('Public queue configuration missing')
-    # PortalID and Vcode are public page routing values; no login or token is used.
-    body = json.dumps({'PortalID': portal.group(1), 'Vcode': page.vcode, 'ReqFmt': 'LIST'}).encode()
+    # Read the same public JSON as the page, avoiding its unrelated slow HTML assets.
+    # PortalID and Vcode identify the clinic, and are not authentication credentials.
+    body = json.dumps({'PortalID': PUBLIC_PORTAL_ID, 'Vcode': PUBLIC_CLINIC_CODE, 'ReqFmt': 'LIST'}).encode()
     rooms = parse_rooms(json.loads(request(ENDPOINT, body)))
     return {'clinic': '博群診所', 'source_url': SOURCE, 'fetched_at': datetime.now(TAIPEI).isoformat(), 'fetch_ok': True, 'scheduled': os.environ.get('GITHUB_ACTIONS') == 'true', 'rooms': rooms}
 
@@ -85,11 +82,13 @@ def main():
         print('Public queue fetched successfully')
     except Exception as exc:
         # Publish a clear unavailable state instead of old numbers or invented zeroes.
-        print('Queue unavailable:', type(exc).__name__)
+        print('Queue unavailable:', type(exc).__name__, str(exc))
         result = {'clinic': '博群診所', 'source_url': SOURCE, 'fetched_at': datetime.now(TAIPEI).isoformat(), 'fetch_ok': False, 'rooms': []}
     path = Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    if not result['fetch_ok']:
+        sys.exit(1)
 
 
 if __name__ == '__main__':
