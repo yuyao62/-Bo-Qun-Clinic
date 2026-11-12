@@ -37,6 +37,7 @@ footer{background:#edf0fa}
 .schedule-mobile-tip{display:none}
 @media(max-width:640px){.schedule{margin-top:28px}.schedule-heading{padding:20px}.schedule-heading h2{font-size:20px}.schedule-scroll{padding:4px 16px 0}.schedule-notes{padding:16px 20px 20px}.schedule-mobile-tip{display:block;padding:0 20px;color:var(--muted);font-size:11px}.schedule-table th,.schedule-table td{padding:17px 8px}}
 @media(max-width:640px){header{height:96px}.clinic-sign{width:175px}.clinic-sign-name{font-size:28px}.clinic-sign-sub{font-size:8px}.header-link{padding:7px 9px}}
+.session-time{display:block;white-space:nowrap;font-size:10px;font-weight:400;line-height:1.5;margin-top:5px}.schedule-table tbody th{width:110px}
 </style>
 </head>
 <body>
@@ -55,18 +56,19 @@ footer{background:#edf0fa}
    <caption>門診醫師班表；「余／鄭／羅」為原表的醫師姓氏標示。</caption>
    <thead><tr><th scope="col">時段</th><th scope="col">星期一</th><th scope="col">星期二</th><th scope="col">星期三</th><th scope="col">星期四</th><th scope="col">星期五</th><th scope="col">星期六</th><th scope="col">星期日</th></tr></thead>
    <tbody>
-    <tr><th scope="row">早</th><td>余／鄭</td><td>羅</td><td>余</td><td>鄭</td><td>余／羅</td><td>鄭</td><td>余</td></tr>
-    <tr><th scope="row">午</th><td>鄭／羅</td><td>羅／余</td><td>鄭</td><td>鄭</td><td>羅</td><td>羅</td><td class="closed">休診</td></tr>
-    <tr><th scope="row">晚</th><td>余</td><td>余</td><td>羅</td><td>余</td><td>鄭</td><td>羅</td><td class="closed">休診</td></tr>
+    <tr><th scope="row">早<small class="session-time">08:30–12:00</small></th><td>余／鄭</td><td>羅</td><td>余</td><td>鄭</td><td>余／羅</td><td>鄭</td><td>余</td></tr>
+    <tr><th scope="row">午<small class="session-time">14:30–18:00</small></th><td>鄭／羅</td><td>羅／余</td><td>鄭</td><td>鄭</td><td>羅</td><td>羅</td><td class="closed">休診</td></tr>
+    <tr><th scope="row">晚<small class="session-time">18:30–21:30</small></th><td>余</td><td>余</td><td>羅</td><td>余</td><td>鄭</td><td>羅</td><td class="closed">休診</td></tr>
    </tbody>
   </table>
  </div>
- <div class="schedule-notes"><p class="schedule-alert">此表依 2025 年 2 月 3 日發布的公告整理，供就診前參考；醫師班表、休診及異動請以診所最新公告為準。</p><p>原圖未列早、午、晚的確切看診時間，請來電 02-2460-1356 確認。</p><p>資料來源：博群診所 Facebook 門診公告（2025/02/03）。</p></div>
+ <div class="schedule-notes"><p class="schedule-alert">此表依 2025 年 2 月 3 日發布的公告整理，供就診前參考；醫師班表、休診及異動請以診所最新公告為準。</p><p>看診時段依原候診頁面資訊整理；班表或休診異動請來電 02-2460-1356 確認。</p><p>資料來源：博群診所 Facebook 門診公告（2025/02/03）。</p></div>
 </section>
 <section class="visit"><div><h2>博群診所</h2><p>基隆市中正區新豐街 446 號</p></div><p class="small">數字未提供或資料逾時時，請開啟原站確認。此頁僅提供候診資訊查詢，不提供線上掛號。</p></section>
 </main>
 <footer><div class="wrap footer-inner"><p>博群診所・候診資訊便民查詢頁</p><p>資料來源：全國雲端候診中心</p></div></footer>
 <script>
+const DATA_URL=location.hostname==='yuyao62.github.io'?'https://raw.githubusercontent.com/yuyao62/-Bo-Qun-Clinic/main/queue.json':'./queue.json';
 const SOURCE='https://wroom.vision.com.tw/MainPage/ClinicInfo.aspx?CliID=QCpjCdqyOd8V%2buKpwwfjbg==';
 document.querySelectorAll('.source').forEach(a=>a.href=SOURCE);
 const $=id=>document.getElementById(id), STALE=15*60*1000;
@@ -110,7 +112,7 @@ function render(data){
 async function load(){
  const button=$('refresh');button.disabled=true;button.textContent='讀取中…';
  try{
-  const response=await fetch('./queue.json?t='+Date.now(),{cache:'no-store',signal:AbortSignal.timeout(12000)});
+  const response=await fetch(DATA_URL+'?t='+Date.now(),{cache:'no-store',signal:AbortSignal.timeout(12000)});
   if(!response.ok)throw Error('fetch');const data=await response.json();
   if(data.clinic!=='博群診所'||!Array.isArray(data.rooms))throw Error('shape');
   latest=data;failed=false;render(data);
@@ -121,3 +123,4 @@ $('refresh').addEventListener('click',load);load();setInterval(load,60000);setIn
 </script>
 </body>
 </html>
+
