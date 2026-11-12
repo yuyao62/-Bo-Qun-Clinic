@@ -1,18 +1,7 @@
 {
   "clinic": "博群診所",
   "source_url": "https://wroom.vision.com.tw/MainPage/ClinicInfo.aspx?CliID=QCpjCdqyOd8V%2buKpwwfjbg==",
-  "fetched_at": "2026-11-12T08:56:21.387620+08:00",
-  "fetch_ok": true,
-  "scheduled": true,
-  "rooms": [
-    {
-      "room": "第一診",
-      "doctor": "余澤施 醫師",
-      "period": "上午",
-      "current_number": 5,
-      "waiting_count": 12,
-      "source_updated_at": "2026-11-12T08:54:53+08:00",
-      "status": "available"
-    }
-  ]
+  "fetched_at": "2026-11-12T08:57:16.732429+08:00",
+  "fetch_ok": false,
+  "rooms": []
 }
